@@ -1,4 +1,4 @@
-🚀Sistema Gestor de Reportes de Área - Fullstack
+🚀Sistema Gestor de Reportes de Área - Frontend y Backend
 
 📌Descripción
 Este proyecto es un sistema gestor de reportes de área, desarrollado como parte de mi primera estadía profesional en la empresa Los Cinco Soles.
