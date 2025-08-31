@@ -14,7 +14,7 @@ Este sistema está diseñado para **agilizar la gestión de información** y mej
 - **Backend:** PHP (Laravel 9) – framework MVC.  
 - **Base de datos:** MySQL.  
 - **Frontend:** Bootstrap – interfaz moderna y responsiva.  
-- **Servidor local:** XAMPP (Apache + MySQL + PHP).  
+- **Servidor local:** XAMPP - (Apache + MySQL + PHP).  
 
 ## ⚙️Instalación y ejecución  
 
