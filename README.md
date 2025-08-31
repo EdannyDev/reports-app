@@ -11,10 +11,10 @@ Este sistema está diseñado para **agilizar la gestión de información** y mej
 
 ## 🛠️Tecnologías utilizadas  
 
-- **Backend:** PHP (Laravel 9) – framework MVC.  
-- **Base de datos:** MySQL.  
-- **Frontend:** Bootstrap – interfaz moderna y responsiva.  
-- **Servidor local:** XAMPP - (Apache + MySQL + PHP).  
+- **Backend: PHP (Laravel 9)** – Framework backend MVC.  
+- **Base de datos: MySQL** - Base de datos relacional.
+- **Frontend: Bootstrap** – Interfaz moderna y responsiva.  
+- **Servidor local: XAMPP** - (Apache + MySQL + PHP).  
 
 ## ⚙️Instalación y ejecución  
 
@@ -22,13 +22,13 @@ Este sistema está diseñado para **agilizar la gestión de información** y mej
 # 1. Clonar el repositorio
 git clone https://github.com/EdannyDev/reports-app.git
 
-# 2. Copiar los archivos a la carpeta de XAMPP
-(ejemplo: htdocs/reports-app).
+# 2. Mover los archivos al directorio de XAMPP
+htdocs/reports-app
 
 # 3. Crear una base de datos en MySQL llamada:
-reports_db (o el nombre que prefieras).
+CREATE DATABASE reports_db;
 
-# 4. Configurar el archivo .env de Laravel con tus credenciales:
+# 4. Configurar el archivo .env de Laravel
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
