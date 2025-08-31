@@ -22,9 +22,11 @@ Este sistema está diseñado para **agilizar la gestión de información** y mej
 # 1. Clonar el repositorio
 git clone https://github.com/EdannyDev/reports-app.git
 
-# 2. Copiar los archivos a la carpeta de XAMPP (ejemplo: htdocs/reports-app).
+# 2. Copiar los archivos a la carpeta de XAMPP
+(ejemplo: htdocs/reports-app).
 
-# 3. Crear una base de datos en MySQL llamada reports_db (o el nombre que prefieras).
+# 3. Crear una base de datos en MySQL llamada:
+reports_db (o el nombre que prefieras).
 
 # 4. Configurar el archivo .env de Laravel con tus credenciales:
 
