@@ -71,10 +71,9 @@ class ReportController extends Controller
     {
         $report = Report::findOrFail($id);
 
-        // Puedes agregar una verificación de permisos si lo deseas:
-        /* if ($report->user_id !== Auth::id()) {
+        if ($report->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
             abort(403, 'No estás autorizado para realizar esta acción.');
-        } */
+        }
 
         $areas = Area::all();
         $statuses = ['pendiente', 'cancelado', 'completado'];
@@ -99,10 +98,9 @@ class ReportController extends Controller
 
         $report = Report::findOrFail($id);
 
-        // Puedes agregar una verificación de permisos si lo deseas:
-        /* if ($report->user_id !== Auth::id()) {
+        if ($report->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
             abort(403, 'No estás autorizado para realizar esta acción.');
-        } */
+        }
 
         // Actualizamos el reporte con los datos validados.
         $report->update([
@@ -124,10 +122,9 @@ class ReportController extends Controller
     {
         $report = Report::findOrFail($id);
 
-        // Puedes agregar una verificación de permisos si lo deseas:
-        /* if ($report->user_id !== Auth::id()) {
+        if ($report->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
             abort(403, 'No estás autorizado para realizar esta acción.');
-        } */
+        }
 
         $report->delete();
 
