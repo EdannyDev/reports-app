@@ -28,6 +28,13 @@
                                 <i class="fas fa-cog"></i> Configurar Perfil
                             </a>
                         </li>
+                        @if(Auth::user()->isAdmin())
+                        <li>
+                            <a class="dropdown-item" href="{{ route('users.index') }}">
+                                <i class="fas fa-users"></i> Gestionar Usuarios
+                            </a>
+                        </li>
+                        @endif
                         <li>
                             <form action="{{ route('logout') }}" method="POST">
                                 @csrf
@@ -47,5 +54,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        // Cierra automáticamente cualquier alerta Bootstrap (.alert) a los 3s.
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach((el) => {
+                bootstrap.Alert.getOrCreateInstance(el).close();
+            });
+        }, 3000);
+    </script>
 </body>
 </html>

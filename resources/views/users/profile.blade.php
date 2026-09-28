@@ -4,17 +4,17 @@
 <div class="container py-4">
     <h1 class="mb-5 text-center">Configuración de Perfil</h1>
 
-    <!-- Mensaje de éxito -->
     @if(session('success'))
-        <div id="successMessage" class="alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x m-4 z-index-1050" role="alert">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
             <i class="fa fa-check-circle me-2"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
-    <!-- Mensaje de error -->
     @if(session('error'))
-        <div id="errorMessage" class="alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x m-4 z-index-1050" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="fa fa-exclamation-circle me-2"></i> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
 
@@ -119,7 +119,6 @@
     </div>
 </div>
 
-<!-- Estilos personalizados -->
 <style>
     .password-toggle {
         color: #6c757d;
@@ -135,7 +134,7 @@
     }
 
     .custom-divider {
-        border-top: 1px solid rgb(71, 70, 70);  /* Línea divisora con el color correcto */
+        border-top: 1px solid rgb(71, 70, 70);
         margin: 2.5rem 0;
     }
 
@@ -157,60 +156,18 @@
     }
 
     .description-text {
-        font-size: 1.1rem;  /* Aumenté el tamaño de la descripción */
+        font-size: 1.1rem;
         color: #6c757d;
-        text-align: right; /* Alineación a la derecha */
-        line-height: 1.6; /* Mejorando la legibilidad */
-    }
-
-    /* Animación de aparición suave */
-    @keyframes fadeIn {
-        0% {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        100% {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* Animación de desaparición suave */
-    @keyframes fadeOut {
-        0% {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        100% {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-    }
-
-    /* Aplicar las animaciones */
-    #successMessage, #errorMessage {
-        width: 350px; /* Hacer la notificación más delgada pero más larga */
-        animation: fadeIn 1s ease-out, fadeOut 1s ease-out 3s forwards;
-    }
-
-    /* Centrar la notificación en la parte superior */
-    #successMessage, #errorMessage {
-        position: fixed;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        margin: 10px;
-        z-index: 1050;
+        text-align: right;
+        line-height: 1.6;
     }
 </style>
 
-<!-- Scripts -->
 <script>
-    // Función para alternar la visibilidad de las contraseñas
     function togglePassword(id) {
         var passwordField = document.getElementById(id);
         var eyeIcon = document.getElementById(id + '-eye');
-        
+
         if (passwordField.type === "password") {
             passwordField.type = "text";
             eyeIcon.classList.remove('fa-eye-slash');
@@ -221,18 +178,5 @@
             eyeIcon.classList.add('fa-eye-slash');
         }
     }
-
-    // Ocultar mensaje de éxito y error después de 4 segundos
-    setTimeout(() => {
-        const successMessage = document.getElementById('successMessage');
-        const errorMessage = document.getElementById('errorMessage');
-        if (successMessage) {
-            successMessage.classList.add('fade');
-        }
-        if (errorMessage) {
-            errorMessage.classList.add('fade');
-        }
-    }, 3000);
 </script>
-
 @endsection

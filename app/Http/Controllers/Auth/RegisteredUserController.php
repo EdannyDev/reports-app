@@ -2,55 +2,37 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\User;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterRequest;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Redirect;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Muestra el formulario de registro.
-     *
-     * @return \Illuminate\View\View
-     */
     public function create()
     {
-        return view('auth.register');  // Vista del formulario de registro
+        return view('auth.register');
     }
 
     /**
-     * Maneja el registro de un nuevo usuario.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
+     * El rol nunca se decide con datos que el propio usuario controla
+     * (como el dominio de su correo). El primer usuario del sistema
+     * se vuelve admin de forma automática; el resto queda como
+     * 'employee' y solo puede ser ascendido por un admin existente.
      */
-    public function store(Request $request)
+    public function store(RegisterRequest $request)
     {
-        // Validación de los datos de entrada
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', 'min:8'],
-        ]);
+        $isFirstUser = User::count() === 0;
 
-        // Determinar el rol basado en el dominio del correo
-        $role = str_ends_with($request->email, '@opsdesk-app.com') ? 'admin' : 'employee';
-
-        // Crear el usuario con el rol determinado
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),  // Hashea la contraseña
-            'role' => $role,  // Asigna el rol aquí
+            ...$request->validated(),
+            'password' => Hash::make($request->validated('password')),
+            'role' => $isFirstUser ? 'admin' : 'employee',
         ]);
 
-        // Iniciar sesión automáticamente
         Auth::login($user);
 
-        // Redirigir al usuario después del registro
-        return redirect()->route('home');  // Cambia 'home' por la ruta que deseas después del login
+        return redirect()->route('home');
     }
 }

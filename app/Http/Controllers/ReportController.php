@@ -2,78 +2,82 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreReportRequest;
+use App\Http\Requests\UpdateReportRequest;
+use App\Mail\NewReportNotification;
 use App\Models\Report;
 use App\Models\Area;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class ReportController extends Controller
 {
     /**
-     * Mostrar la lista de reportes.
+     * Lista de reportes, paginada y filtrable por texto libre.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $reports = Report::with(['area', 'user'])->get();
-        return view('reports.index', compact('reports'));
+        $search = $request->query('search');
+
+        /** @var LengthAwarePaginator $reports */
+        $reports = Report::with(['area', 'user'])
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%")
+                        ->orWhere('status', 'like', "%{$search}%")
+                        ->orWhereHas('area', fn ($q) => $q->where('name', 'like', "%{$search}%"))
+                        ->orWhereHas('user', fn ($q) => $q->where('name', 'like', "%{$search}%"));
+                });
+            })
+            ->latest()
+            ->paginate(5);
+
+        $reports->withQueryString();
+
+        return view('reports.index', compact('reports', 'search'));
     }
 
-    /**
-     * Mostrar el formulario de creación de un nuevo reporte.
-     */
     public function create()
     {
-        $areas = Area::all(); // Obtener las áreas disponibles.
+        $areas = Area::all();
         return view('reports.create', compact('areas'));
     }
 
-    /**
-     * Almacenar un nuevo reporte en la base de datos.
-     */
-    public function store(Request $request)
+    // Validación delegada a StoreReportRequest.
+    public function store(StoreReportRequest $request)
     {
-        // Validación de los datos enviados en la creación del reporte.
-        $request->validate([
-            'title' => 'required|string|max:50',
-            'description' => 'required|string|max:150',
-            'email' => 'required|email',
-            'phone' => 'required|regex:/^[0-9]{10}$/',
-            'area_id' => 'required|exists:areas,id',
-        ]);
-
-        // Crear el reporte con los datos validados.
-        Report::create([
-            'title' => $request->title,
-            'description' => $request->description,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'status' => 'pendiente', // Establecer un estado predeterminado
-            'area_id' => $request->area_id,
+        $report = Report::create([
+            ...$request->validated(),
+            'status' => 'pendiente',
             'user_id' => Auth::id(),
         ]);
+
+        $adminEmails = User::where('role', 'admin')->pluck('email');
+
+        if ($adminEmails->isNotEmpty()) {
+            Mail::to($adminEmails)->send(new NewReportNotification($report));
+        }
 
         return redirect()->route('reports.index')->with('success', 'Reporte creado exitosamente.');
     }
 
-    /**
-     * Mostrar los detalles de un reporte.
-     */
     public function show($id)
     {
         $report = Report::with(['area', 'user'])->findOrFail($id);
         return view('reports.show', compact('report'));
     }
 
-    /**
-     * Mostrar el formulario de edición de un reporte existente.
-     */
     public function edit($id)
     {
         $report = Report::findOrFail($id);
 
-        if ($report->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
-            abort(403, 'No estás autorizado para realizar esta acción.');
-        }
+        $this->authorize('update', $report);
 
         $areas = Area::all();
         $statuses = ['pendiente', 'cancelado', 'completado'];
@@ -81,50 +85,23 @@ class ReportController extends Controller
         return view('reports.edit', compact('report', 'areas', 'statuses'));
     }
 
-    /**
-     * Actualizar un reporte existente en la base de datos.
-     */
-    public function update(Request $request, $id)
+    // Validación delegada a UpdateReportRequest.
+    public function update(UpdateReportRequest $request, $id)
     {
-        // Validación de los datos enviados en la actualización del reporte.
-        $request->validate([
-            'title' => 'required|string|max:50',
-            'description' => 'required|string|max:150',
-            'email' => 'required|email',
-            'phone' => 'required|regex:/^[0-9]{10}$/',
-            'area_id' => 'required|exists:areas,id',
-            'status' => 'required|string|in:pendiente,cancelado,completado',
-        ]);
-
         $report = Report::findOrFail($id);
 
-        if ($report->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
-            abort(403, 'No estás autorizado para realizar esta acción.');
-        }
+        $this->authorize('update', $report);
 
-        // Actualizamos el reporte con los datos validados.
-        $report->update([
-            'title' => $request->title,
-            'description' => $request->description,
-            'email' => $request->email,
-            'phone' => $request->phone,
-            'status' => $request->status,
-            'area_id' => $request->area_id,
-        ]);
+        $report->update($request->validated());
 
         return redirect()->route('reports.index')->with('success', 'Reporte actualizado exitosamente.');
     }
 
-    /**
-     * Eliminar un reporte de la base de datos.
-     */
     public function destroy($id)
     {
         $report = Report::findOrFail($id);
 
-        if ($report->user_id !== Auth::id() && Auth::user()->role !== 'admin') {
-            abort(403, 'No estás autorizado para realizar esta acción.');
-        }
+        $this->authorize('delete', $report);
 
         $report->delete();
 

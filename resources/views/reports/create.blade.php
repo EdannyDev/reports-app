@@ -10,7 +10,6 @@
             <form method="POST" action="{{ route('reports.store') }}">
                 @csrf
 
-                <!-- Título -->
                 <div class="mb-3">
                     <label for="title" class="form-label">
                         <i class="fas fa-heading"></i> Título
@@ -21,7 +20,6 @@
                     @enderror
                 </div>
 
-                <!-- Descripción -->
                 <div class="mb-3">
                     <label for="description" class="form-label">
                         <i class="fas fa-pencil-alt"></i> Descripción
@@ -32,7 +30,6 @@
                     @enderror
                 </div>
 
-                <!-- Correo Electrónico -->
                 <div class="mb-3">
                     <label for="email" class="form-label">
                         <i class="fas fa-envelope"></i> Correo Electrónico
@@ -43,7 +40,6 @@
                     @enderror
                 </div>
 
-                <!-- Teléfono -->
                 <div class="mb-3">
                     <label for="phone" class="form-label">
                         <i class="fas fa-phone"></i> Teléfono
@@ -54,17 +50,15 @@
                     @enderror
                 </div>
 
-                <!-- Estatus -->
                 <div class="mb-3">
-                    <label for="status" class="form-label">
+                    <label class="form-label">
                         <i class="fas fa-check-circle"></i> Estatus
                     </label>
-                    <select class="form-control" id="status" name="status" readonly>
-                        <option value="pendiente" selected>Pendiente</option>
-                    </select>
+                    <p class="form-control-plaintext text-muted mb-0">
+                        Todo reporte nuevo inicia como <span class="badge bg-warning">Pendiente</span>.
+                    </p>
                 </div>
 
-                <!-- Área -->
                 <div class="mb-3">
                     <label for="area_id" class="form-label">
                         <i class="fas fa-map-marker-alt"></i> Área
@@ -79,7 +73,6 @@
                     @enderror
                 </div>
 
-                <!-- Botones: Crear Reporte y Regresar -->
                 <div class="d-flex justify-content-between">
                     <button type="submit" class="btn btn-success btn-lg">
                         <i class="fas fa-file-lines"></i> Crear Reporte

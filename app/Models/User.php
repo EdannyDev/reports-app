@@ -45,13 +45,18 @@ class User extends Authenticatable
     }
 
     /**
-     * Dynamically determine the user's role based on their email domain.
-     *
-     * @return string
+     * Helper de autorización: evita repetir el string 'admin' por todo el código.
      */
-    public function getRoleAttribute(): string
+    public function isAdmin(): bool
     {
-        // Determina el rol basado en el dominio del correo
-        return str_ends_with($this->email, '@opsdesk-app.com') ? 'admin' : 'employee';
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Un usuario tiene muchos reportes creados.
+     */
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
     }
 }
