@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateReportRequest extends FormRequest
 {
@@ -23,7 +24,7 @@ class UpdateReportRequest extends FormRequest
             'email' => 'required|email',
             'phone' => 'required|regex:/^[0-9]{10}$/',
             'area_id' => 'required|exists:areas,id',
-            'status' => 'required|string|in:pendiente,cancelado,completado',
+            'status' => [Rule::requiredIf(fn () => $this->user()->isAdmin()), 'in:pendiente,cancelado,completado'],
         ];
     }
 }

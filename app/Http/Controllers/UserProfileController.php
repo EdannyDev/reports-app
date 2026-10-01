@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -21,18 +22,12 @@ class UserProfileController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . Auth::id(),
             'password' => 'nullable|confirmed|min:8',
-            'role' => 'nullable|in:admin,employee',
         ]);
 
         /** @var \App\Models\User $user */
         $user = Auth::user();
         $user->name = $validated['name'];
         $user->email = $validated['email'];
-
-        // Solo un admin puede reasignar el rol de la cuenta.
-        if ($user->isAdmin() && isset($validated['role'])) {
-            $user->role = $validated['role'];
-        }
 
         if ($request->filled('password')) {
             $user->password = Hash::make($validated['password']);
@@ -48,6 +43,10 @@ class UserProfileController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
+
+        if ($user->isAdmin() && User::where('role', 'admin')->count() <= 1) {
+            return back()->with('error', 'Eres el único administrador. Asigna otro antes de eliminar tu cuenta.');
+        }
 
         $user->delete();
 

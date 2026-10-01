@@ -24,7 +24,7 @@ The application follows Laravel's MVC structure:
 - Password hashing via bcrypt
 - The first user to register becomes admin automatically; every user after that starts as `employee` and can only be promoted by an existing admin from the user management panel
 - Middleware-based route protection (`auth`, and a custom `admin` middleware for admin-only routes)
-- Authorization for report editing/deletion enforced through `ReportPolicy`, not inline checks in controllers
+- Authorization for viewing, editing and deleting reports enforced through `ReportPolicy`, not inline checks in controllers: employees only see their own reports, and only admins change a report's status or delete it
 - Reports are stored with a `restrict` foreign key on areas, so an area with reports cannot be deleted by accident
 
 ## 👥 Role-Based Access Control (RBAC)
@@ -36,8 +36,9 @@ The application follows Laravel's MVC structure:
 
 **Employee**
 - Submit new reports
-- View report status and history
-- No edit/delete permissions on reports or areas
+- View only their own reports and their status
+- Edit their own reports, but cannot change the status (only admins do)
+- No permission to delete reports or to manage areas
 
 Roles are never derived from user-controlled data (such as an email domain). The first registered account becomes admin; every subsequent account must be promoted explicitly.
 

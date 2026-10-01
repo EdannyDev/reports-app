@@ -24,6 +24,7 @@ class ReportController extends Controller
 
         /** @var LengthAwarePaginator $reports */
         $reports = Report::with(['area', 'user'])
+            ->when(! $request->user()->isAdmin(), fn ($query) => $query->where('user_id', $request->user()->id))
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")
@@ -61,7 +62,12 @@ class ReportController extends Controller
         $adminEmails = User::where('role', 'admin')->pluck('email');
 
         if ($adminEmails->isNotEmpty()) {
-            Mail::to($adminEmails)->send(new NewReportNotification($report));
+            // Si el correo falla, el reporte ya quedó guardado: se registra el error y el usuario no ve un 500
+            try {
+                Mail::to($adminEmails)->send(new NewReportNotification($report));
+            } catch (\Throwable $e) {
+                report($e);
+            }
         }
 
         return redirect()->route('reports.index')->with('success', 'Reporte creado exitosamente.');
@@ -70,6 +76,9 @@ class ReportController extends Controller
     public function show($id)
     {
         $report = Report::with(['area', 'user'])->findOrFail($id);
+
+        $this->authorize('view', $report);
+
         return view('reports.show', compact('report'));
     }
 
@@ -92,7 +101,14 @@ class ReportController extends Controller
 
         $this->authorize('update', $report);
 
-        $report->update($request->validated());
+        $data = $request->validated();
+
+        // Solo un admin cambia el estado del reporte
+        if (! $request->user()->isAdmin()) {
+            unset($data['status']);
+        }
+
+        $report->update($data);
 
         return redirect()->route('reports.index')->with('success', 'Reporte actualizado exitosamente.');
     }

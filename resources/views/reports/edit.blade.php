@@ -55,6 +55,7 @@
                     @enderror
                 </div>
 
+                @if(auth()->user()->isAdmin())
                 <!-- Estatus -->
                 <div class="mb-3">
                     <label for="status" class="form-label">
@@ -69,6 +70,7 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+                @endif
 
                 <!-- Área -->
                 <div class="mb-3">
