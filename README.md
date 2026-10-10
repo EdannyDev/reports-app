@@ -61,7 +61,7 @@ To run it yourself, create a free Mailtrap account, open a Sandbox inbox, and co
 ## 🛠 Tech Stack
 `PHP 8.2+` · `Laravel 11` · `MySQL`
 
-`Blade` · `Bootstrap 5` · `Vite`
+`Blade` · `Bootstrap 5`
 
 `Mailtrap Sandbox` (email testing)
 
@@ -72,7 +72,6 @@ To run it yourself, create a free Mailtrap account, open a Sandbox inbox, and co
 git clone https://github.com/EdannyDev/reports-app.git
 cd reports-app
 composer install
-npm install
 ```
 
 ### Environment Variables
@@ -117,4 +116,7 @@ php artisan serve
 The app will be available at `http://127.0.0.1:8000`. Register the first account to become the system's initial admin.
 
 ---
+
+> **Note:** this repository's commit history was reset when sensitive data was removed from the original repository.
+
 Author: [@EdannyDev](https://github.com/EdannyDev)
